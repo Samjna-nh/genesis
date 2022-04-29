@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title></title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+
+  <link rel="stylesheet" href="css/genesis.css">
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+
+  <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
+  <script src="js/bundle.js"></script>
+  <script>
+    require(["genesis"], (genesis) => {
+      game = genesis.game;
+      game.init();
+    });
+    $("title").html("genesis 0.0.1");
+    $(() => $('[data-toggle="tooltip"]').tooltip({
+      trigger: 'hover'
+    }));
+  </script>
+</head>
+
+<body>
+  <div id="main" class="container-fluid overflow-hidden bg-light">
+    <div class="row">
+      <nav class="">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <a class="nav-link active" id="world1-tab" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1" aria-selected="true">World1</a>
+          <a class="nav-link" id="world2-tab" data-toggle="tab" href="#nav-2" role="tab" aria-controls="nav-2" aria-selected="false">World2</a>
+        </div>
+      </nav>
+    </div>
+    <div class="row tab-content bg-green" id="nav-tabContent">
+        <div id="nav-1" class="tab-pane fade show active fluid" role="tabpanel" aria-labelledby="nav-1-tab">
+          <div id="value" class="card"> 0 </div>
+          <button id="plus1" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="right" title="increase your value by 1">+1</button>
+          <button id="pluser" type="button" class="hide_ btn btn-primary">buy 1</button>
+          <button id="hreset" type="button" class="btn btn-danger">Hard Reset</button>
+        </div>
+        <div class="tab-pane fade" id="nav-2" role="tabpanel" aria-labelledby="nav-2-tab">...</div>
+      </div>
+  </div>
+</body>
+<html>

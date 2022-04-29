@@ -1,0 +1,18 @@
+{
+  "compileOnSave": true,
+  "include": [
+    "src/*.ts",
+  ],
+  "compilerOptions": {
+    "outDir": "js",
+    "module": "amd",
+    "target": "es5",
+    "outFile": "js/bundle.js",
+    "lib": [
+      "dom",
+      "es2015",
+      "es5",
+      "es6"
+    ]
+  },
+}
