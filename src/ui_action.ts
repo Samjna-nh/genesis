@@ -1,12 +1,27 @@
 declare var $;
-import {Game} from './genesis';
 
 export const html = {
-  update_value_1(v: number) {
-    $("#value").text(v.toFixed(0));
+  updateInteger(id:String, v: number) {
+      $("#"+id).text(v.toFixed(0));
   },
 
-  show_pluser() {
-    $("#pluser").show(100);
+  updateFloat(id:String, v: number) {
+      $("#"+id).text(v.toFixed(3));
   },
+
+  updateString(id:String, v: string) {
+      $("#"+id).text(v);
+  },
+
+  showCreature() {
+    show("creature");
+  },
+
+  showWorldTab() {
+    show("world-nav");
+  },
+}
+
+function show(id: string) {
+  if(!$("#"+id).hasClass("show")) $("#"+id).show("slow");
 }

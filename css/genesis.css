@@ -52,8 +52,21 @@
   background: palegreen;
 }
 
+
+.bg-gray {
+  background: lightgray;
+}
+
 .hide_ {
   display: none;
+}
+
+.btn {
+  margin: 5px 3px;
+}
+
+.main-content {
+  padding: 10px;
 }
 
 /* only for testing */

@@ -1,40 +1,53 @@
-import { Value1 } from './value1';
+import { World } from './world';
 import { add_reaction } from './react';
-import { html } from './ui_action';
 
-export class Game {
-  value1: Value1;
-  a = 1;
+const DEBUG = true;
 
-  toString(): string {
-    return this.value1.toString();
+interface IGame {
+  world: World;
+}
+
+class Game implements IGame {
+  world: World;
+
+  constructor(data: IGame) {
+    if (data) {
+      this.world = new World(data.world);
+    } else {
+      this.world = new World(null);
+    }
   }
 
-  init() {
-    this.load();
+  start() {
     add_reaction();
     setInterval(() => this.update(), 10);
     setInterval(() => this.save(), 10000);
   }
 
-  load() {
-    const save = localStorage.getItem("save");
-    if (save) {
-      const d = atob(save).split(";");
-      this.value1 = new Value1(d[0]);
-    } else {
-      this.value1 = new Value1("");
-    }
-  }
-
   update() {
-    this.value1.update();
+    this.world.update();
   }
 
   save() {
     console.log("saved");
-    localStorage.setItem("save", btoa(this.toString()));
+    localStorage.setItem("save", btoa(JSON.stringify(this)));
   }
 }
 
-export const game = new Game;
+export const game = load();
+
+function load(): Game {
+  let save = null;
+  save = localStorage.getItem("save");
+
+  if (save) {
+    try {
+      return new Game(JSON.parse(atob(save)));
+    } catch (e) {
+      console.error("failed to load");
+      console.error(e);
+    }
+  }
+
+  return new Game(null);
+}

@@ -3,17 +3,22 @@ declare var $;
 
 export function add_reaction() {
   $(() => {
-    $("#plus1").click(() => {
-      game.value1.plus1();
-    });
-    $("#pluser").click(() => {
-      game.value1.buy1();
+    $("#add-creature").click(() => {
+      game.world.addCreature();
     });
 
-    $("#hreset").click(() => {
+    $("#add-food").click(() => {
+      game.world.addFood();
+    });
+
+    $("#hard-reset").click(() => {
       localStorage.removeItem("save");
       $("#main").effect("clip", {direction:"horizontal"});
       setTimeout(()=>location.reload(), 1000);
+    });
+
+    $("#mannually-save").click(() => {
+      game.save();
     });
   });
 }

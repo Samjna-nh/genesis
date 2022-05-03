@@ -23,34 +23,66 @@
   <script>
     require(["genesis"], (genesis) => {
       game = genesis.game;
-      game.init();
+      game.start();
     });
     $("title").html("genesis 0.0.1");
-    $(() => $('[data-toggle="tooltip"]').tooltip({
-      trigger: 'hover'
-    }));
+    $(() => {
+      $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'hover'
+      })
+    });
   </script>
 </head>
 
 <body>
   <div id="main" class="container-fluid overflow-hidden bg-light">
-    <div class="row">
-      <nav class="">
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-          <a class="nav-link active" id="world1-tab" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1" aria-selected="true">World1</a>
-          <a class="nav-link" id="world2-tab" data-toggle="tab" href="#nav-2" role="tab" aria-controls="nav-2" aria-selected="false">World2</a>
+    <nav class="row">
+      <ul class="nav nav-pills hide_" id="main-nav" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="world-tab" data-toggle="tab" href="#world-content" role="tab" aria-controls="world-content" aria-selected="true">World</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="row tab-content bg-gray" id="world-content" role="tabpanel" aria-labelledby="world-tab">
+      <div class="container-fluid">
+        <div class="row hide_" id="world-nav">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" id="creature-tab" data-toggle="tab" href="#creature-content" role="tab" aria-controls="creature-content" aria-selected="true">World</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" id="jobs-tab" data-toggle="tab" href="#jobs-content" role="tab" aria-controls="jobs-content" aria-selected="false">Job</a>
+            </li>
+          </ul>
         </div>
-      </nav>
-    </div>
-    <div class="row tab-content bg-green" id="nav-tabContent">
-        <div id="nav-1" class="tab-pane fade show active fluid" role="tabpanel" aria-labelledby="nav-1-tab">
-          <div id="value" class="card"> 0 </div>
-          <button id="plus1" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="right" title="increase your value by 1">+1</button>
-          <button id="pluser" type="button" class="hide_ btn btn-primary">buy 1</button>
-          <button id="hreset" type="button" class="btn btn-danger">Hard Reset</button>
+        <div class="row tab-content main-content bg-green" id="creature-tab-content">
+          <div id="creature-content" class="tab-pane fade show active fluid" role="tabpanel" aria-labelledby="creature-tab">
+            <div id="food">
+              <span id="food-label">Food</span>
+              :
+              <span id="food-num"></span>
+              <button id="add-food" type="button" class="btn btn-light">+1</button>
+            </div>
+            <div id="creature" class="hide_">
+              <span id="creature-label">Human</span>
+              :
+              <span id="creature-num"></span>
+              /
+              <span id="population-limit"></span>
+              <button id="add-creature" type="button" class="btn btn-light">+1 by
+                <span id="creature-cost"></span> food</button>
+            </div>
+          </div>
+          <div id="jobs-content" class="tab-pane fade fluid" role="tabpanel" aria-labelledby="jobs-tab">
+            jobs
+          </div>
         </div>
-        <div class="tab-pane fade" id="nav-2" role="tabpanel" aria-labelledby="nav-2-tab">...</div>
       </div>
+    </div>
+  </div>
+  <div>
+    <button id="mannually-save" type="button" class="btn btn-info">Save</button>
+    <button id="hard-reset" type="button" class="btn btn-danger">Hard Reset</button>
   </div>
 </body>
 <html>
