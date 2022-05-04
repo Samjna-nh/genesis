@@ -19,6 +19,21 @@
   padding: 10px;
 }
 
+#info {
+  position: fixed;
+  right: 1vw;
+  bottom: 1vh;
+}
+
+#info div {
+  margin: 0.2em 0;
+}
+
+#world-nav .active {
+  background: palegreen;
+  border-bottom: palegreen 1px solid;
+}
+
 /* only for testing */
 .bordered {
   border: solid 2px red

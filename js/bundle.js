@@ -16,7 +16,10 @@ var __extends = (this && this.__extends) || (function () {
 define("ui_action", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.html = void 0;
+    exports.html = exports.MAX_ALERT_NUM = void 0;
+    exports.MAX_ALERT_NUM = 5;
+    var alertNum = 0;
+    var alertID = 0;
     exports.html = {
         updateInteger: function (id, v) {
             $("#" + id).text(v.toFixed(0));
@@ -35,11 +38,39 @@ define("ui_action", ["require", "exports"], function (require, exports) {
         },
         showJob: function (job) {
             show(job + "pane");
+        },
+        alert: function (info) {
+            $("#info").append("<div id=\"alert-".concat(alertID, "\" class=\"alert alert-primary alert-dismissible fade show hide_\" role=\"alert\">") +
+                "<span id=\"alert-".concat(alertID, "-text\"></span>") +
+                "<button id=\"alert-".concat(alertID, "-btn\" type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">") +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>');
+            $("#alert-" + alertID + "-btn").on("click", function () {
+                alertNum--;
+            });
+            $("#alert-" + alertID + "-text").text(info);
+            $("#alert-" + alertID).show("normal");
+            $("#alert-" + alertID).css("display", "block");
+            alertID++;
+            alertID %= exports.MAX_ALERT_NUM * 2;
+            alertNum++;
+            tryRemoveAlert();
         }
     };
+    function tryRemoveAlert() {
+        if (alertNum > exports.MAX_ALERT_NUM) {
+            var firstAlert_1 = $("#info div:first-child");
+            firstAlert_1.hide("normal", function () {
+                alertNum--;
+                firstAlert_1.remove();
+                tryRemoveAlert();
+            });
+        }
+    }
     function show(id) {
         if ($("#" + id).css("display") != "flex") {
-            $("#" + id).show("slow");
+            $("#" + id).show("normal");
             $("#" + id).css("display", "flex");
         }
     }
@@ -231,7 +262,7 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
     }(utils_2.BaseGameData));
     exports.World = World;
 });
-define("react", ["require", "exports", "genesis", "jobs"], function (require, exports, genesis_2, jobs_2) {
+define("react", ["require", "exports", "genesis", "jobs", "ui_action"], function (require, exports, genesis_2, jobs_2, ui_action_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.add_reaction = void 0;
@@ -262,6 +293,7 @@ define("react", ["require", "exports", "genesis", "jobs"], function (require, ex
             }
             $("#mannually-save").click(function () {
                 genesis_2.game.save();
+                ui_action_4.html.alert("Game saved.");
             });
         });
     }

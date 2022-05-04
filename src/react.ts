@@ -1,5 +1,6 @@
 import { game } from 'genesis';
 import {allJobs} from 'jobs';
+import {html} from 'ui_action';
 
 declare var $;
 
@@ -30,6 +31,7 @@ export function add_reaction() {
 
     $("#mannually-save").click(() => {
       game.save();
+      html.alert("Game saved.");
     });
   });
 }
