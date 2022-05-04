@@ -295,6 +295,17 @@ define("react", ["require", "exports", "genesis", "jobs", "ui_action"], function
                 genesis_2.game.save();
                 ui_action_4.html.alert("Game saved.");
             });
+            $("#music-play").click(function () {
+                var player = $("#audio-player").get(0);
+                if (player.paused) {
+                    player.play();
+                    $("#music-play").text("Pause BGM");
+                }
+                else {
+                    player.pause();
+                    $("#music-play").text("Play BGM");
+                }
+            });
         });
     }
     exports.add_reaction = add_reaction;

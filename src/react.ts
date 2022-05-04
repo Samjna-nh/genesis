@@ -1,6 +1,6 @@
 import { game } from 'genesis';
-import {allJobs} from 'jobs';
-import {html} from 'ui_action';
+import { allJobs } from 'jobs';
+import { html } from 'ui_action';
 
 declare var $;
 
@@ -16,15 +16,15 @@ export function add_reaction() {
 
     $("#hard-reset").click(() => {
       localStorage.removeItem("save");
-      $("#main").effect("clip", {direction:"horizontal"});
-      setTimeout(()=>location.reload(), 1000);
+      $("#main").effect("clip", { direction: "horizontal" });
+      setTimeout(() => location.reload(), 1000);
     });
 
     for (const job of allJobs) {
-      $("#add-"+job).click(() => {
+      $("#add-" + job).click(() => {
         game.world.jobs.add(job);
       });
-      $("#sub-"+job).click(() => {
+      $("#sub-" + job).click(() => {
         game.world.jobs.sub(job);
       });
     }
@@ -32,6 +32,17 @@ export function add_reaction() {
     $("#mannually-save").click(() => {
       game.save();
       html.alert("Game saved.");
+    });
+
+    $("#music-play").click(() => {
+      const player = $("#audio-player").get(0);
+      if (player.paused) {
+        player.play();
+        $("#music-play").text("Pause BGM");
+      } else {
+        player.pause();
+        $("#music-play").text("Play BGM");
+      }
     });
   });
 }
