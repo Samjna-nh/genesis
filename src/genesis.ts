@@ -1,7 +1,7 @@
 import { World } from './world';
 import { add_reaction } from './react';
 
-const DEBUG = true;
+export const DEBUG = true;
 
 interface IGame {
   world: World;
@@ -29,7 +29,10 @@ class Game implements IGame {
   }
 
   save() {
-    console.log("saved");
+    if (DEBUG) {
+      console.log("saved");
+      console.log(game);
+    }
     localStorage.setItem("save", btoa(JSON.stringify(this)));
   }
 }

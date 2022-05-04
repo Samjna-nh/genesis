@@ -1,4 +1,5 @@
 import { BaseGameData } from 'utils';
+import { html } from 'ui_action';
 
 export const allJobs = [
   "hunter", "farmer", "miner", "lumberjack", "scientist"
@@ -20,8 +21,8 @@ export class Jobs extends BaseGameData implements IJobs {
   constructor(data: IJobs) {
     super();
     this.updatableData = [
-      ["totalCreature", "total-creature", "int"],
-      ["idle", "idle-creature", "int"],
+      ["totalCreature", "job-total-creature", "int"],
+      ["idle", "job-idle-creature", "int"],
     ]
 
     if (data) {
@@ -41,6 +42,25 @@ export class Jobs extends BaseGameData implements IJobs {
     this.updateIdle();
   }
 
+  add(job: string) {
+    if (this.unlockedJobs.indexOf(job) >= 0 && this.idle > 0) {
+      this.jobbed[job]++;
+      this.updateIdle();
+    }
+  }
+
+  sub(job: string) {
+    if (this.unlockedJobs.indexOf(job) >= 0 && this.jobbed[job] > 0) {
+      this.jobbed[job]--;
+      this.updateIdle();
+    }
+  }
+
+  setCreature(creature: number) {
+    this.totalCreature = creature;
+    this.updateIdle();
+  }
+
   updateIdle() {
     this.idle = this.totalCreature;
     for (let job in this.jobbed) {
@@ -49,10 +69,17 @@ export class Jobs extends BaseGameData implements IJobs {
     this.updateData();
   }
 
+  updateData() {
+    super.updateData();
+    for (const job of this.unlockedJobs) {
+      html.updateInteger(job + "-num", this.jobbed[job]);
+    }
+  }
+
   unlock(job: string) {
-    if (this.unlockedJobs.indexOf(job) >= 0) {
+    if (this.unlockedJobs.indexOf(job) < 0) {
       this.unlockedJobs.push(job);
-      // TODO show job tag in html
+      html.showJob(job);
     }
   }
 }

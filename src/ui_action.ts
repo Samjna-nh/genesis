@@ -20,8 +20,15 @@ export const html = {
   showWorldTab() {
     show("world-nav");
   },
+
+  showJob(job: string) {
+    show(job+"pane");
+  }
 }
 
 function show(id: string) {
-  if(!$("#"+id).hasClass("show")) $("#"+id).show("slow");
+  if($("#"+id).css("display") != "flex") {
+    $("#"+id).show("slow");
+    $("#"+id).css("display", "flex");
+  }
 }

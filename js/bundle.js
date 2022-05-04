@@ -33,10 +33,15 @@ define("ui_action", ["require", "exports"], function (require, exports) {
         showWorldTab: function () {
             show("world-nav");
         },
+        showJob: function (job) {
+            show(job + "pane");
+        }
     };
     function show(id) {
-        if (!$("#" + id).hasClass("show"))
+        if ($("#" + id).css("display") != "flex") {
             $("#" + id).show("slow");
+            $("#" + id).css("display", "flex");
+        }
     }
 });
 define("utils", ["require", "exports", "ui_action"], function (require, exports, ui_action_1) {
@@ -85,7 +90,7 @@ define("utils", ["require", "exports", "ui_action"], function (require, exports,
     }());
     exports.BaseGameData = BaseGameData;
 });
-define("jobs", ["require", "exports", "utils"], function (require, exports, utils_1) {
+define("jobs", ["require", "exports", "utils", "ui_action"], function (require, exports, utils_1, ui_action_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Jobs = exports.allJobs = void 0;
@@ -97,8 +102,8 @@ define("jobs", ["require", "exports", "utils"], function (require, exports, util
         function Jobs(data) {
             var _this = _super.call(this) || this;
             _this.updatableData = [
-                ["totalCreature", "total-creature", "int"],
-                ["idle", "idle-creature", "int"],
+                ["totalCreature", "job-total-creature", "int"],
+                ["idle", "job-idle-creature", "int"],
             ];
             if (data) {
                 _this.totalCreature = data.totalCreature;
@@ -118,6 +123,22 @@ define("jobs", ["require", "exports", "utils"], function (require, exports, util
             _this.updateIdle();
             return _this;
         }
+        Jobs.prototype.add = function (job) {
+            if (this.unlockedJobs.indexOf(job) >= 0 && this.idle > 0) {
+                this.jobbed[job]++;
+                this.updateIdle();
+            }
+        };
+        Jobs.prototype.sub = function (job) {
+            if (this.unlockedJobs.indexOf(job) >= 0 && this.jobbed[job] > 0) {
+                this.jobbed[job]--;
+                this.updateIdle();
+            }
+        };
+        Jobs.prototype.setCreature = function (creature) {
+            this.totalCreature = creature;
+            this.updateIdle();
+        };
         Jobs.prototype.updateIdle = function () {
             this.idle = this.totalCreature;
             for (var job in this.jobbed) {
@@ -125,17 +146,24 @@ define("jobs", ["require", "exports", "utils"], function (require, exports, util
             }
             this.updateData();
         };
+        Jobs.prototype.updateData = function () {
+            _super.prototype.updateData.call(this);
+            for (var _i = 0, _a = this.unlockedJobs; _i < _a.length; _i++) {
+                var job = _a[_i];
+                ui_action_2.html.updateInteger(job + "-num", this.jobbed[job]);
+            }
+        };
         Jobs.prototype.unlock = function (job) {
-            if (this.unlockedJobs.indexOf(job) >= 0) {
+            if (this.unlockedJobs.indexOf(job) < 0) {
                 this.unlockedJobs.push(job);
-                // TODO show job tag in html
+                ui_action_2.html.showJob(job);
             }
         };
         return Jobs;
     }(utils_1.BaseGameData));
     exports.Jobs = Jobs;
 });
-define("world", ["require", "exports", "ui_action", "utils", "jobs"], function (require, exports, ui_action_2, utils_2, jobs_1) {
+define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"], function (require, exports, ui_action_3, utils_2, jobs_1, genesis_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.World = void 0;
@@ -169,7 +197,7 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs"], function (
             return _this;
         }
         World.prototype.addFood = function () {
-            this.food += 1;
+            this.food += genesis_1.DEBUG ? 100 : 1;
             this.updateNum();
         };
         World.prototype.addCreature = function () {
@@ -187,40 +215,53 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs"], function (
             this.creatureCost = Math.ceil(this.baseCreatureCost * Math.pow(1.1, this.creature));
         };
         World.prototype.updateNum = function () {
+            this.jobs.setCreature(this.creature);
             this.updateData();
             this.updateElement();
         };
         World.prototype.updateElement = function () {
             if (this.food >= 10 || this.creature > 0) {
-                ui_action_2.html.showCreature();
+                ui_action_3.html.showCreature();
             }
             if (this.creature >= 5) {
-                ui_action_2.html.showWorldTab();
+                ui_action_3.html.showWorldTab();
             }
         };
         return World;
     }(utils_2.BaseGameData));
     exports.World = World;
 });
-define("react", ["require", "exports", "genesis"], function (require, exports, genesis_1) {
+define("react", ["require", "exports", "genesis", "jobs"], function (require, exports, genesis_2, jobs_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.add_reaction = void 0;
     function add_reaction() {
         $(function () {
             $("#add-creature").click(function () {
-                genesis_1.game.world.addCreature();
+                genesis_2.game.world.addCreature();
             });
             $("#add-food").click(function () {
-                genesis_1.game.world.addFood();
+                genesis_2.game.world.addFood();
             });
             $("#hard-reset").click(function () {
                 localStorage.removeItem("save");
                 $("#main").effect("clip", { direction: "horizontal" });
                 setTimeout(function () { return location.reload(); }, 1000);
             });
+            var _loop_1 = function (job) {
+                $("#add-" + job).click(function () {
+                    genesis_2.game.world.jobs.add(job);
+                });
+                $("#sub-" + job).click(function () {
+                    genesis_2.game.world.jobs.sub(job);
+                });
+            };
+            for (var _i = 0, allJobs_2 = jobs_2.allJobs; _i < allJobs_2.length; _i++) {
+                var job = allJobs_2[_i];
+                _loop_1(job);
+            }
             $("#mannually-save").click(function () {
-                genesis_1.game.save();
+                genesis_2.game.save();
             });
         });
     }
@@ -229,8 +270,8 @@ define("react", ["require", "exports", "genesis"], function (require, exports, g
 define("genesis", ["require", "exports", "world", "react"], function (require, exports, world_1, react_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.game = void 0;
-    var DEBUG = true;
+    exports.game = exports.DEBUG = void 0;
+    exports.DEBUG = true;
     var Game = /** @class */ (function () {
         function Game(data) {
             if (data) {
@@ -250,7 +291,10 @@ define("genesis", ["require", "exports", "world", "react"], function (require, e
             this.world.update();
         };
         Game.prototype.save = function () {
-            console.log("saved");
+            if (exports.DEBUG) {
+                console.log("saved");
+                console.log(exports.game);
+            }
             localStorage.setItem("save", btoa(JSON.stringify(this)));
         };
         return Game;

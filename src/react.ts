@@ -1,4 +1,6 @@
-import { game } from './genesis';
+import { game } from 'genesis';
+import {allJobs} from 'jobs';
+
 declare var $;
 
 export function add_reaction() {
@@ -16,6 +18,15 @@ export function add_reaction() {
       $("#main").effect("clip", {direction:"horizontal"});
       setTimeout(()=>location.reload(), 1000);
     });
+
+    for (const job of allJobs) {
+      $("#add-"+job).click(() => {
+        game.world.jobs.add(job);
+      });
+      $("#sub-"+job).click(() => {
+        game.world.jobs.sub(job);
+      });
+    }
 
     $("#mannually-save").click(() => {
       game.save();

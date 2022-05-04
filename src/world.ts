@@ -1,6 +1,7 @@
 import { html } from 'ui_action';
 import { BaseGameData } from 'utils';
 import { Jobs } from 'jobs';
+import {DEBUG} from 'genesis';
 
 interface IWorld {
   populationLimit: number;
@@ -48,7 +49,7 @@ export class World extends BaseGameData implements IWorld {
   }
 
   addFood() {
-    this.food += 1;
+    this.food += DEBUG ? 100 : 1;
     this.updateNum();
   }
 
@@ -70,6 +71,7 @@ export class World extends BaseGameData implements IWorld {
   }
 
   updateNum() {
+    this.jobs.setCreature(this.creature);
     this.updateData();
     this.updateElement();
   }
