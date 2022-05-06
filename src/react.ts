@@ -11,7 +11,7 @@ export function add_reaction() {
     });
 
     $("#add-food").click(() => {
-      game.world.addFood();
+      game.world.addFood(1);
     });
 
     $("#hard-reset").click(() => {
@@ -22,10 +22,10 @@ export function add_reaction() {
 
     for (const job of allJobs) {
       $("#add-" + job).click(() => {
-        game.world.jobs.add(job);
+        game.world.jobs.add(job, 1);
       });
       $("#sub-" + job).click(() => {
-        game.world.jobs.sub(job);
+        game.world.jobs.sub(job, 1);
       });
     }
 

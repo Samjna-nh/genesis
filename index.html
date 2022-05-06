@@ -58,23 +58,28 @@
         <div class="row tab-content main-content bg-green" id="world-tab-content">
           <div id="creature-content" class="tab-pane fade show active container-fluid" role="tabpanel" aria-labelledby="creature-tab">
             <div id="food" class="row align-items-center">
-              <div class="col-2">
+              <div class="col-1">
                 <span id="food-label">Food</span>:
               </div>
-              <div id="food-num" class="col-2">
+              <div id="food-num" class="col-1">
               </div>
-              <div id="food-btn" class="col-2">
+              <div class="col-1">
+                +<span id="food-ps"></span>/s
+              </div>
+              <div id="food-btn" class="col-3">
                 <button id="add-food" type="button" class="btn btn-light">+1</button>
               </div>
             </div>
             <div id="creature" class="hide_ row align-items-center">
-              <div class="col-2">
+              <div class="col-1">
                 <span id="creature-label">Human</span>:
               </div>
-              <div class="col-2">
+              <div class="col-1">
                 <span id="creature-num"></span> / <span id="population-limit"></span>
               </div>
-              <div id="creature-btn" class="col-2">
+              <div class="col-1">
+              </div>
+              <div id="creature-btn" class="col-3">
                 <button id="add-creature" type="button" class="btn btn-light">+1 by
                   <span id="creature-cost"></span> food</button>
               </div>
@@ -82,59 +87,64 @@
           </div>
           <div id="jobs-content" class="tab-pane fade container-fluid" role="tabpanel" aria-labelledby="jobs-tab">
             <div class="row">
-              <div class="col-5">
-                <span id="job-creature-label">Human</span>:
+              <div class="col-1">
+                Idle:
+              </div>
+              <div class="col-3">
                 <span id="job-idle-creature"></span> / <span id="job-total-creature"></span>
               </div>
             </div>
             <div id="hunter-pane" class="row align-items-center">
-              <div id="hunter-label" class="col-2">
+              <div id="hunter-label" class="col-1">
                 Hunter:
               </div>
-              <div id="hunter-num" class="col-1">0</div>
-              <div id="hunter-btn" class="col-2">
+              <div id="hunter-num" class="col-2"></div>
+              <div id="hunter-btn" class="col-1">
                 <div class="btn-group">
                   <button id="sub-hunter" type="button" class="btn btn-sm btn-light">-</button>
                   <button id="add-hunter" type="button" class="btn btn-sm btn-light">+</button>
                 </div>
               </div>
+              <div id="hunter-product" class="col-3 text-secondary hide_">
+                +<span id="hunter-food"></span>&nbspFood per sec.
+              </div>
             </div>
             <div id="lumberjack-pane" class="row hide_ align-items-center">
-              <div id="lumberjack-label" class="col-2">
+              <div id="lumberjack-label" class="col-1">
                 Lumberjack:
               </div>
-              <div id="lumberjack-num" class="col-1">0</div>
-              <div id="lumberjack-btn" class="col-2">
+              <div id="lumberjack-num" class="col-2"></div>
+              <div id="lumberjack-btn" class="col-1">
                 <button id="sub-lumberjack" type="button" class="btn btn-sm btn-light">-</button>
                 <button id="add-lumberjack" type="button" class="btn btn-sm btn-light">+</button>
               </div>
             </div>
             <div id="farmer-pane" class="row hide_ align-items-center">
-              <div id="farmer-label" class="col-2">
+              <div id="farmer-label" class="col-1">
                 Farmer:
               </div>
-              <div id="farmer-num" class="col-1">0</div>
-              <div id="farmer-btn" class="col-2">
+              <div id="farmer-num" class="col-2"></div>
+              <div id="farmer-btn" class="col-1">
                 <button id="sub-farmer" type="button" class="btn btn-sm btn-light">-</button>
                 <button id="add-farmer" type="button" class="btn btn-sm btn-light">+</button>
               </div>
             </div>
             <div id="miner-pane" class="row hide_ align-items-center">
-              <div id="miner-label" class="col-2">
+              <div id="miner-label" class="col-1">
                 Miner:
               </div>
-              <div id="miner-num" class="col-1">0</div>
-              <div id="miner-btn" class="col-2">
+              <div id="miner-num" class="col-2"></div>
+              <div id="miner-btn" class="col-1">
                 <button id="sub-miner" type="button" class="btn btn-sm btn-light">-</button>
                 <button id="add-miner" type="button" class="btn btn-sm btn-light">+</button>
               </div>
             </div>
             <div id="scientist-pane" class="row hide_ align-items-center">
-              <div id="scientist-label" class="col-2">
+              <div id="scientist-label" class="col-1">
                 Scientist:
               </div>
-              <div id="scientist-num" class="col-1">0</div>
-              <div id="scientist-btn" class="col-2">
+              <div id="scientist-num" class="col-2"></div>
+              <div id="scientist-btn" class="col-1">
                 <button id="sub-scientist" type="button" class="btn btn-sm btn-light">-</button>
                 <button id="add-scientist" type="button" class="btn btn-sm btn-light">+</button>
               </div>
@@ -144,16 +154,16 @@
       </div>
     </div>
   </div>
-  <div>
+  <div id="utilities">
     <button id="mannually-save" type="button" class="btn btn-info">Save</button>
     <button id="hard-reset" type="button" class="btn btn-danger">Hard Reset</button>
     <button id="music-play" type="button" class="btn btn-primary">Play BGM</button>
-      <audio id="audio-player" loop preload>
-        <source src="music/bgm.mp3" type="audio/mpeg">
-        <div class="card">
-          The background music is not playable as your browser does not support it.
-        </div>
-      </audio>
+    <audio id="audio-player" loop preload>
+      <source src="music/bgm.mp3" type="audio/mpeg">
+      <div class="card">
+        The background music is not playable as your browser does not support it.
+      </div>
+    </audio>
   </div>
   <div id="info">
   </div>

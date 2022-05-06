@@ -29,6 +29,14 @@ export const html = {
     show(job + "pane");
   },
 
+  showJobProduct(job: string) {
+    show(job + "-product", null);
+  },
+
+  hideJobProduct(job: string) {
+    hide(job + "-product", null);
+  },
+
   alert(info: string) {
     $("#info").append(
       `<div id="alert-${alertID}" class="alert alert-primary alert-dismissible fade show hide_" role="alert">` +
@@ -38,7 +46,7 @@ export const html = {
       '</button>' +
       '</div>'
     );
-    $("#alert-" + alertID + "-btn").on("click", ()=> {
+    $("#alert-" + alertID + "-btn").on("click", () => {
       alertNum--;
     });
     $("#alert-" + alertID + "-text").text(info);
@@ -62,9 +70,15 @@ function tryRemoveAlert() {
   }
 }
 
-function show(id: string) {
-  if ($("#" + id).css("display") != "flex") {
-    $("#" + id).show("normal");
+function show(id: string, speed = "normal") {
+  if ($("#" + id).css("display") == "none") {
+    $("#" + id).show(speed);
     $("#" + id).css("display", "flex");
+  }
+}
+
+function hide(id: string, speed = "normal") {
+  if ($("#" + id).css("display") != "hide") {
+    $("#" + id).hide(speed);
   }
 }

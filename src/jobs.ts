@@ -1,72 +1,62 @@
 import { BaseGameData } from 'utils';
 import { html } from 'ui_action';
+import { World } from 'world';
 
 export const allJobs = [
   "hunter", "farmer", "miner", "lumberjack", "scientist"
 ]
 
-interface IJobs {
-  totalCreature: number;
+export class Jobs extends BaseGameData {
   jobbed: object;
   unlockedJobs: string[];
-  idle: number;
-}
+  world: World
 
-export class Jobs extends BaseGameData implements IJobs {
-  totalCreature: number;
-  jobbed: object;
-  unlockedJobs: string[];
-  idle: number;
+  constructor(data, world: World) {
+    super(data);
 
-  constructor(data: IJobs) {
-    super();
-    this.updatableData = [
-      ["totalCreature", "job-total-creature", "int"],
+    this.world = world;
+  }
+
+  init() {
+    this.jobbed = {};
+    for (let job of allJobs) {
+      this.jobbed[job] = 0;
+    }
+    this.unlockedJobs = [];
+  }
+
+  getSavableData() {
+    return ["jobbed", "unlockedJobs"];
+  }
+
+  getUpdatableData() {
+    return [
       ["idle", "job-idle-creature", "int"],
-    ]
-
-    if (data) {
-      this.totalCreature = data.totalCreature;
-      this.jobbed = data.jobbed;
-      this.unlockedJobs = data.unlockedJobs;
-      this.idle = data.idle;
-    } else {
-      this.totalCreature = 0;
-      this.jobbed = {};
-      for (let job of allJobs) {
-        this.jobbed[job] = 0;
-      }
-      this.unlockedJobs = [];
-    }
-
-    this.updateIdle();
+    ];
   }
 
-  add(job: string) {
+  add(job: string, v: number) {
     if (this.unlockedJobs.indexOf(job) >= 0 && this.idle > 0) {
-      this.jobbed[job]++;
-      this.updateIdle();
+      this.jobbed[job] += Math.min(this.idle, v);
+      this.updateData();
+      this.updateElement();
     }
   }
 
-  sub(job: string) {
+  sub(job: string, v: number) {
     if (this.unlockedJobs.indexOf(job) >= 0 && this.jobbed[job] > 0) {
-      this.jobbed[job]--;
-      this.updateIdle();
+      this.jobbed[job] -= Math.min(this.jobbed[job], v);
+      this.updateData();
+      this.updateElement();
     }
   }
 
-  setCreature(creature: number) {
-    this.totalCreature = creature;
-    this.updateIdle();
-  }
-
-  updateIdle() {
-    this.idle = this.totalCreature;
+  get idle() {
+    let res = this.world.creature;
     for (let job in this.jobbed) {
-      this.idle -= this.jobbed[job];
+      res -= this.jobbed[job];
     }
-    this.updateData();
+    return res;
   }
 
   updateData() {
@@ -74,6 +64,18 @@ export class Jobs extends BaseGameData implements IJobs {
     for (const job of this.unlockedJobs) {
       html.updateInteger(job + "-num", this.jobbed[job]);
     }
+    this.updateHunter();
+  }
+
+  updateElement() {
+    for (let job in this.jobbed) {
+      if (this.jobbed[job] > 0) html.showJobProduct(job);
+      else html.hideJobProduct(job);
+    }
+  }
+
+  updateHunter() {
+    html.updateFloat("hunter-food", this.world.getHunterPps());
   }
 
   unlock(job: string) {

@@ -2,15 +2,12 @@ import { World } from './world';
 import { add_reaction } from './react';
 
 export const DEBUG = true;
+export const LFPS = 100;
 
-interface IGame {
-  world: World;
-}
-
-class Game implements IGame {
+class Game {
   world: World;
 
-  constructor(data: IGame) {
+  constructor(data) {
     if (data) {
       this.world = new World(data.world);
     } else {
@@ -20,8 +17,8 @@ class Game implements IGame {
 
   start() {
     add_reaction();
-    setInterval(() => this.update(), 10);
-    setInterval(() => this.save(), 10000);
+    setInterval(() => this.update(), 1000 / LFPS);
+    setInterval(() => this.save(), 30000);
   }
 
   update() {
@@ -33,7 +30,11 @@ class Game implements IGame {
       console.log("saved");
       console.log(game);
     }
-    localStorage.setItem("save", btoa(JSON.stringify(this)));
+    const data = {
+      world: this.world.save(),
+    };
+
+    localStorage.setItem("save", btoa(JSON.stringify(data)));
   }
 }
 

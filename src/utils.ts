@@ -11,12 +11,22 @@ type params = string[][];
  *   which is a float number, where be shown in tag-1 and tag-2.
  *   Available types: "integer" ("int"), "float", "string" ("str"), "function" ("func").
  */
-export class BaseGameData {
+export abstract class BaseGameData {
   updatableData: params;
+  savableData: string[];
 
-  constructor() {
-    this.updatableData = [];
+  constructor(data: object) {
+    this.updatableData = this.getUpdatableData();
+    this.savableData = this.getSavableData();
+    if(data) {
+      this.load(data);
+    } else {
+      this.init();
+    }
   }
+
+  abstract getUpdatableData(): params;
+  abstract getSavableData(): string[];
 
   updateData() {
     for (let data of this.updatableData) {
@@ -40,5 +50,27 @@ export class BaseGameData {
           break;
       }
     }
+  }
+
+  // Need to be overrided to load the BGD objects.
+  load(obj: object) {
+    for (let data of this.savableData) {
+      this[data] = obj[data];
+    }
+  }
+
+  abstract init(): void;
+
+  save(): object {
+    const obj = {};
+    for (let data of this.savableData) {
+      if (this[data] instanceof BaseGameData) {
+        obj[data] = this[data].save();
+      } else {
+        obj[data] = this[data];
+      }
+    }
+
+    return obj;
   }
 }
