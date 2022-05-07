@@ -1,3 +1,5 @@
+import { getAmountWithKeys } from 'utils';
+
 declare var $;
 
 export const MAX_ALERT_NUM = 5;
@@ -56,6 +58,14 @@ export const html = {
     alertID %= MAX_ALERT_NUM * 2;
     alertNum++;
     tryRemoveAlert();
+  },
+
+  updateWithKey(e) {
+    const amount = getAmountWithKeys(e);
+    $(".amount-type-1").text(amount > 0 ? getAmountWithKeys(e) : " all");
+    $(".amount-type-2").text(
+      e.shiftKey ? " all" : ""
+    );
   }
 }
 

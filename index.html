@@ -80,7 +80,8 @@
               <div class="col-1">
               </div>
               <div id="creature-btn" class="col-3">
-                <button id="add-creature" type="button" class="btn btn-light">+1 by
+                <button id="add-creature" type="button" class="btn btn-light">+
+                  <span class="amount-type-1">1</span> by
                   <span id="creature-cost"></span> food</button>
               </div>
             </div>
@@ -99,14 +100,18 @@
                 Hunter:
               </div>
               <div id="hunter-num" class="col-2"></div>
-              <div id="hunter-btn" class="col-1">
+              <div id="hunter-btn" class="col-2">
                 <div class="btn-group">
-                  <button id="sub-hunter" type="button" class="btn btn-sm btn-light">-</button>
-                  <button id="add-hunter" type="button" class="btn btn-sm btn-light">+</button>
+                  <button id="sub-hunter" type="button" class="btn btn-sm btn-light">
+                    -<span class="amount-type-2"></span>
+                  </button>
+                  <button id="add-hunter" type="button" class="btn btn-sm btn-light">
+                    +<span class="amount-type-2"></span>
+                  </button>
                 </div>
               </div>
               <div id="hunter-product" class="col-3 text-secondary hide_">
-                +<span id="hunter-food"></span>&nbspFood per sec.
+                +<span id="hunter-food"></span>&nbspfood/s.
               </div>
             </div>
             <div id="lumberjack-pane" class="row hide_ align-items-center">

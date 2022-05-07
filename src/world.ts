@@ -21,7 +21,7 @@ export class World extends BaseGameData {
   }
 
   getSavableData() {
-    return ["food", "creature", "populationLimit", "baseCreatureCost"];
+    return ["food", "creature", "populationLimit", "baseCreatureCost", "jobs"];
   }
 
   load(data) {
@@ -59,13 +59,17 @@ export class World extends BaseGameData {
   }
 
   addCreature() {
-    if (this.creature < this.populationLimit)
+    if (this.creature < this.populationLimit) {
       if (this.food >= this.creatureCost) {
         this.creature += 1;
         this.food -= this.creatureCost;
         this.updateCreatureCost();
         this.updateNum();
+        return true;
       }
+    }
+
+    return false;
   }
 
   getHunterPps() {

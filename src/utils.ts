@@ -18,7 +18,7 @@ export abstract class BaseGameData {
   constructor(data: object) {
     this.updatableData = this.getUpdatableData();
     this.savableData = this.getSavableData();
-    if(data) {
+    if (data) {
       this.load(data);
     } else {
       this.init();
@@ -73,4 +73,20 @@ export abstract class BaseGameData {
 
     return obj;
   }
+}
+
+export function buyWithKeys(e, func: () => boolean) {
+  let time = getAmountWithKeys(e);
+  if (time < 0) {
+    while (func());
+  } else {
+    while (time-- > 0 && func());
+  }
+}
+
+export function getAmountWithKeys(e) {
+  if (e.shiftKey) return 25;
+  if (e.ctrlKey) return 100;
+  if (e.altKey) return -1;
+  return 1;
 }

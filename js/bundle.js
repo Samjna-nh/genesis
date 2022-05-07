@@ -13,85 +13,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define("ui_action", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.html = exports.MAX_ALERT_NUM = void 0;
-    exports.MAX_ALERT_NUM = 5;
-    var alertNum = 0;
-    var alertID = 0;
-    exports.html = {
-        updateInteger: function (id, v) {
-            $("#" + id).text(v.toFixed(0));
-        },
-        updateFloat: function (id, v) {
-            $("#" + id).text(v.toFixed(3));
-        },
-        updateString: function (id, v) {
-            $("#" + id).text(v);
-        },
-        showCreature: function () {
-            show("creature");
-        },
-        showWorldTab: function () {
-            show("world-nav");
-        },
-        showJob: function (job) {
-            show(job + "pane");
-        },
-        showJobProduct: function (job) {
-            show(job + "-product", null);
-        },
-        hideJobProduct: function (job) {
-            hide(job + "-product", null);
-        },
-        alert: function (info) {
-            $("#info").append("<div id=\"alert-".concat(alertID, "\" class=\"alert alert-primary alert-dismissible fade show hide_\" role=\"alert\">") +
-                "<span id=\"alert-".concat(alertID, "-text\"></span>") +
-                "<button id=\"alert-".concat(alertID, "-btn\" type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">") +
-                '<span aria-hidden="true">&times;</span>' +
-                '</button>' +
-                '</div>');
-            $("#alert-" + alertID + "-btn").on("click", function () {
-                alertNum--;
-            });
-            $("#alert-" + alertID + "-text").text(info);
-            $("#alert-" + alertID).show("normal");
-            $("#alert-" + alertID).css("display", "block");
-            alertID++;
-            alertID %= exports.MAX_ALERT_NUM * 2;
-            alertNum++;
-            tryRemoveAlert();
-        }
-    };
-    function tryRemoveAlert() {
-        if (alertNum > exports.MAX_ALERT_NUM) {
-            var firstAlert_1 = $("#info div:first-child");
-            firstAlert_1.hide("normal", function () {
-                alertNum--;
-                firstAlert_1.remove();
-                tryRemoveAlert();
-            });
-        }
-    }
-    function show(id, speed) {
-        if (speed === void 0) { speed = "normal"; }
-        if ($("#" + id).css("display") == "none") {
-            $("#" + id).show(speed);
-            $("#" + id).css("display", "flex");
-        }
-    }
-    function hide(id, speed) {
-        if (speed === void 0) { speed = "normal"; }
-        if ($("#" + id).css("display") != "hide") {
-            $("#" + id).hide(speed);
-        }
-    }
-});
 define("utils", ["require", "exports", "ui_action"], function (require, exports, ui_action_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.BaseGameData = void 0;
+    exports.getAmountWithKeys = exports.buyWithKeys = exports.BaseGameData = void 0;
     /*
      * How to use: store all the updatable parameters in the array.
      * The name, the tag id and the type of the parameters should be put as strings in one array to store.
@@ -160,8 +85,110 @@ define("utils", ["require", "exports", "ui_action"], function (require, exports,
         return BaseGameData;
     }());
     exports.BaseGameData = BaseGameData;
+    function buyWithKeys(e, func) {
+        var time = getAmountWithKeys(e);
+        if (time < 0) {
+            while (func())
+                ;
+        }
+        else {
+            while (time-- > 0 && func())
+                ;
+        }
+    }
+    exports.buyWithKeys = buyWithKeys;
+    function getAmountWithKeys(e) {
+        if (e.shiftKey)
+            return 25;
+        if (e.ctrlKey)
+            return 100;
+        if (e.altKey)
+            return -1;
+        return 1;
+    }
+    exports.getAmountWithKeys = getAmountWithKeys;
 });
-define("jobs", ["require", "exports", "utils", "ui_action"], function (require, exports, utils_1, ui_action_2) {
+define("ui_action", ["require", "exports", "utils"], function (require, exports, utils_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.html = exports.MAX_ALERT_NUM = void 0;
+    exports.MAX_ALERT_NUM = 5;
+    var alertNum = 0;
+    var alertID = 0;
+    exports.html = {
+        updateInteger: function (id, v) {
+            $("#" + id).text(v.toFixed(0));
+        },
+        updateFloat: function (id, v) {
+            $("#" + id).text(v.toFixed(3));
+        },
+        updateString: function (id, v) {
+            $("#" + id).text(v);
+        },
+        showCreature: function () {
+            show("creature");
+        },
+        showWorldTab: function () {
+            show("world-nav");
+        },
+        showJob: function (job) {
+            show(job + "pane");
+        },
+        showJobProduct: function (job) {
+            show(job + "-product", null);
+        },
+        hideJobProduct: function (job) {
+            hide(job + "-product", null);
+        },
+        alert: function (info) {
+            $("#info").append("<div id=\"alert-".concat(alertID, "\" class=\"alert alert-primary alert-dismissible fade show hide_\" role=\"alert\">") +
+                "<span id=\"alert-".concat(alertID, "-text\"></span>") +
+                "<button id=\"alert-".concat(alertID, "-btn\" type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">") +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>');
+            $("#alert-" + alertID + "-btn").on("click", function () {
+                alertNum--;
+            });
+            $("#alert-" + alertID + "-text").text(info);
+            $("#alert-" + alertID).show("normal");
+            $("#alert-" + alertID).css("display", "block");
+            alertID++;
+            alertID %= exports.MAX_ALERT_NUM * 2;
+            alertNum++;
+            tryRemoveAlert();
+        },
+        updateWithKey: function (e) {
+            var amount = (0, utils_1.getAmountWithKeys)(e);
+            $(".amount-type-1").text(amount > 0 ? (0, utils_1.getAmountWithKeys)(e) : " all");
+            $(".amount-type-2").text(e.shiftKey ? " all" : "");
+        }
+    };
+    function tryRemoveAlert() {
+        if (alertNum > exports.MAX_ALERT_NUM) {
+            var firstAlert_1 = $("#info div:first-child");
+            firstAlert_1.hide("normal", function () {
+                alertNum--;
+                firstAlert_1.remove();
+                tryRemoveAlert();
+            });
+        }
+    }
+    function show(id, speed) {
+        if (speed === void 0) { speed = "normal"; }
+        if ($("#" + id).css("display") == "none") {
+            $("#" + id).show(speed);
+            $("#" + id).css("display", "flex");
+        }
+    }
+    function hide(id, speed) {
+        if (speed === void 0) { speed = "normal"; }
+        if ($("#" + id).css("display") != "hide") {
+            $("#" + id).hide(speed);
+        }
+    }
+});
+define("jobs", ["require", "exports", "utils", "ui_action"], function (require, exports, utils_2, ui_action_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Jobs = exports.allJobs = void 0;
@@ -242,10 +269,10 @@ define("jobs", ["require", "exports", "utils", "ui_action"], function (require, 
             }
         };
         return Jobs;
-    }(utils_1.BaseGameData));
+    }(utils_2.BaseGameData));
     exports.Jobs = Jobs;
 });
-define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"], function (require, exports, ui_action_3, utils_2, jobs_1, genesis_1) {
+define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"], function (require, exports, ui_action_3, utils_3, jobs_1, genesis_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.World = void 0;
@@ -260,7 +287,7 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
             return _this;
         }
         World.prototype.getSavableData = function () {
-            return ["food", "creature", "populationLimit", "baseCreatureCost"];
+            return ["food", "creature", "populationLimit", "baseCreatureCost", "jobs"];
         };
         World.prototype.load = function (data) {
             _super.prototype.load.call(this, data);
@@ -293,13 +320,16 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
             this.incFood(v);
         };
         World.prototype.addCreature = function () {
-            if (this.creature < this.populationLimit)
+            if (this.creature < this.populationLimit) {
                 if (this.food >= this.creatureCost) {
                     this.creature += 1;
                     this.food -= this.creatureCost;
                     this.updateCreatureCost();
                     this.updateNum();
+                    return true;
                 }
+            }
+            return false;
         };
         World.prototype.getHunterPps = function () {
             return this.jobs.jobbed["hunter"] * 0.2;
@@ -335,17 +365,40 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
             }
         };
         return World;
-    }(utils_2.BaseGameData));
+    }(utils_3.BaseGameData));
     exports.World = World;
 });
-define("react", ["require", "exports", "genesis", "jobs", "ui_action"], function (require, exports, genesis_2, jobs_2, ui_action_4) {
+define("react", ["require", "exports", "genesis", "jobs", "ui_action", "utils"], function (require, exports, genesis_2, jobs_2, ui_action_4, utils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.add_reaction = void 0;
     function add_reaction() {
         $(function () {
-            $("#add-creature").click(function () {
-                genesis_2.game.world.addCreature();
+            // key press checks
+            $(document).keydown(function (e) {
+                switch (e.which) {
+                    case 16: // shift
+                    case 17: // control
+                    case 18: // alt
+                        ui_action_4.html.updateWithKey(e);
+                        break;
+                    default:
+                        break;
+                }
+            });
+            $(document).keyup(function (e) {
+                switch (e.which) {
+                    case 16: // shift
+                    case 17: // control
+                    case 18: // alt
+                        ui_action_4.html.updateWithKey(e);
+                        break;
+                    default:
+                        break;
+                }
+            });
+            $("#add-creature").click(function (e) {
+                (0, utils_4.buyWithKeys)(e, function () { return genesis_2.game.world.addCreature(); });
             });
             $("#add-food").click(function () {
                 genesis_2.game.world.addFood(1);
@@ -356,11 +409,11 @@ define("react", ["require", "exports", "genesis", "jobs", "ui_action"], function
                 setTimeout(function () { return location.reload(); }, 1000);
             });
             var _loop_1 = function (job) {
-                $("#add-" + job).click(function () {
-                    genesis_2.game.world.jobs.add(job, 1);
+                $("#add-" + job).click(function (e) {
+                    genesis_2.game.world.jobs.add(job, e.shiftKey ? genesis_2.game.world.creature : 1);
                 });
-                $("#sub-" + job).click(function () {
-                    genesis_2.game.world.jobs.sub(job, 1);
+                $("#sub-" + job).click(function (e) {
+                    genesis_2.game.world.jobs.sub(job, e.shiftKey ? genesis_2.game.world.creature : 1);
                 });
             };
             for (var _i = 0, allJobs_2 = jobs_2.allJobs; _i < allJobs_2.length; _i++) {

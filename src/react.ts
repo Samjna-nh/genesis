@@ -1,13 +1,40 @@
 import { game } from 'genesis';
 import { allJobs } from 'jobs';
 import { html } from 'ui_action';
+import { buyWithKeys, getAmountWithKeys } from 'utils';
 
 declare var $;
 
 export function add_reaction() {
   $(() => {
-    $("#add-creature").click(() => {
-      game.world.addCreature();
+
+    // key press checks
+    $(document).keydown((e) => {
+      switch(e.which) {
+        case 16: // shift
+        case 17: // control
+        case 18: // alt
+          html.updateWithKey(e);
+          break;
+        default:
+          break;
+      }
+    });
+
+    $(document).keyup((e) => {
+      switch(e.which) {
+        case 16: // shift
+        case 17: // control
+        case 18: // alt
+          html.updateWithKey(e);
+          break;
+        default:
+          break;
+      }
+    });
+
+    $("#add-creature").click((e) => {
+      buyWithKeys(e, () => game.world.addCreature());
     });
 
     $("#add-food").click(() => {
@@ -21,11 +48,11 @@ export function add_reaction() {
     });
 
     for (const job of allJobs) {
-      $("#add-" + job).click(() => {
-        game.world.jobs.add(job, 1);
+      $("#add-" + job).click((e) => {
+        game.world.jobs.add(job, e.shiftKey ? game.world.creature : 1);
       });
-      $("#sub-" + job).click(() => {
-        game.world.jobs.sub(job, 1);
+      $("#sub-" + job).click((e) => {
+        game.world.jobs.sub(job, e.shiftKey ? game.world.creature : 1);
       });
     }
 
