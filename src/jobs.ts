@@ -65,6 +65,7 @@ export class Jobs extends BaseGameData {
       html.updateInteger(job + "-num", this.jobbed[job]);
     }
     this.updateHunter();
+    this.updateLumberjack();
   }
 
   updateElement() {
@@ -78,10 +79,20 @@ export class Jobs extends BaseGameData {
     html.updateFloat("hunter-food", this.world.getHunterPps());
   }
 
+  updateLumberjack() {
+    html.updateFloat("lumberjack-wood", this.world.getLumberjackPps());
+  }
+
   unlock(job: string) {
     if (this.unlockedJobs.indexOf(job) < 0) {
       this.unlockedJobs.push(job);
-      html.showJob(job);
     }
+    html.showJob(job);
+    this.updateData();
+    this.updateElement();
+  }
+
+  unlocked(job: string) {
+    return this.unlockedJobs.indexOf(job) >= 0;
   }
 }

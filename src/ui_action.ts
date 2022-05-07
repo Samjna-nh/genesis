@@ -23,12 +23,16 @@ export const html = {
     show("creature");
   },
 
+  showWood() {
+    show("wood");
+  },
+
   showWorldTab() {
     show("world-nav");
   },
 
   showJob(job: string) {
-    show(job + "pane");
+    show(job + "-pane");
   },
 
   showJobProduct(job: string) {

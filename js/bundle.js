@@ -128,11 +128,14 @@ define("ui_action", ["require", "exports", "utils"], function (require, exports,
         showCreature: function () {
             show("creature");
         },
+        showWood: function () {
+            show("wood");
+        },
         showWorldTab: function () {
             show("world-nav");
         },
         showJob: function (job) {
-            show(job + "pane");
+            show(job + "-pane");
         },
         showJobProduct: function (job) {
             show(job + "-product", null);
@@ -250,6 +253,7 @@ define("jobs", ["require", "exports", "utils", "ui_action"], function (require, 
                 ui_action_2.html.updateInteger(job + "-num", this.jobbed[job]);
             }
             this.updateHunter();
+            this.updateLumberjack();
         };
         Jobs.prototype.updateElement = function () {
             for (var job in this.jobbed) {
@@ -262,17 +266,37 @@ define("jobs", ["require", "exports", "utils", "ui_action"], function (require, 
         Jobs.prototype.updateHunter = function () {
             ui_action_2.html.updateFloat("hunter-food", this.world.getHunterPps());
         };
+        Jobs.prototype.updateLumberjack = function () {
+            ui_action_2.html.updateFloat("lumberjack-wood", this.world.getLumberjackPps());
+        };
         Jobs.prototype.unlock = function (job) {
             if (this.unlockedJobs.indexOf(job) < 0) {
                 this.unlockedJobs.push(job);
-                ui_action_2.html.showJob(job);
             }
+            ui_action_2.html.showJob(job);
+            this.updateData();
+            this.updateElement();
+        };
+        Jobs.prototype.unlocked = function (job) {
+            return this.unlockedJobs.indexOf(job) >= 0;
         };
         return Jobs;
     }(utils_2.BaseGameData));
     exports.Jobs = Jobs;
 });
-define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"], function (require, exports, ui_action_3, utils_3, jobs_1, genesis_1) {
+define("meta", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.metaParams = void 0;
+    exports.metaParams = {
+        creatureCost: 10,
+        creatureCostInc: 1.08,
+        creatureLimit: 100,
+        hunterProduct: 0.1,
+        lumberjackProduct: 0.2,
+    };
+});
+define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis", "meta"], function (require, exports, ui_action_3, utils_3, jobs_1, genesis_1, meta_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.World = void 0;
@@ -281,24 +305,12 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
         function World(data) {
             var _this = _super.call(this, data) || this;
             _this.updateCreatureCost();
-            _this.checkJobUnlocks();
             _this.updateNum();
             _this.jobs.updateElement();
             return _this;
         }
         World.prototype.getSavableData = function () {
-            return ["food", "creature", "populationLimit", "baseCreatureCost", "jobs"];
-        };
-        World.prototype.load = function (data) {
-            _super.prototype.load.call(this, data);
-            this.jobs = new jobs_1.Jobs(data.jobs, this);
-        };
-        World.prototype.init = function () {
-            this.food = 0;
-            this.creature = 0;
-            this.populationLimit = 100;
-            this.baseCreatureCost = 10;
-            this.jobs = new jobs_1.Jobs(null, this);
+            return ["food", "wood", "creature", "populationLimit", "baseCreatureCost", "jobs"];
         };
         World.prototype.getUpdatableData = function () {
             return [
@@ -308,12 +320,32 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
                 ["populationLimit", "population-limit", "int"],
                 ["creatureCost", "creature-cost", "int"],
                 ["foodPs", "food-ps", "float"],
+                ["wood", "wood-num", "int"],
+                ["woodPs", "wood-ps", "float"],
             ];
+        };
+        World.prototype.load = function (data) {
+            _super.prototype.load.call(this, data);
+            this.jobs = new jobs_1.Jobs(data.jobs, this);
+        };
+        World.prototype.init = function () {
+            this.food = 0;
+            this.wood = 0;
+            this.creature = 0;
+            this.populationLimit = meta_1.metaParams.creatureLimit;
+            this.baseCreatureCost = meta_1.metaParams.creatureCost;
+            this.jobs = new jobs_1.Jobs(null, this);
         };
         World.prototype.incFood = function (v) {
             if (v <= 0)
                 return;
             this.food += v;
+            this.updateNum();
+        };
+        World.prototype.incWood = function (v) {
+            if (v <= 0)
+                return;
+            this.wood += v;
             this.updateNum();
         };
         World.prototype.addFood = function (v) {
@@ -332,7 +364,10 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
             return false;
         };
         World.prototype.getHunterPps = function () {
-            return this.jobs.jobbed["hunter"] * 0.2;
+            return this.jobs.jobbed["hunter"] * meta_1.metaParams.hunterProduct;
+        };
+        World.prototype.getLumberjackPps = function () {
+            return this.jobs.jobbed["lumberjack"] * meta_1.metaParams.lumberjackProduct;
         };
         Object.defineProperty(World.prototype, "foodPs", {
             get: function () {
@@ -341,12 +376,20 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
             enumerable: false,
             configurable: true
         });
+        Object.defineProperty(World.prototype, "woodPs", {
+            get: function () {
+                return this.getLumberjackPps();
+            },
+            enumerable: false,
+            configurable: true
+        });
         World.prototype.update = function () {
             this.incFood(this.foodPs / genesis_1.LFPS);
+            this.incWood(this.woodPs / genesis_1.LFPS);
             this.checkJobUnlocks();
         };
         World.prototype.updateCreatureCost = function () {
-            this.creatureCost = Math.ceil(this.baseCreatureCost * Math.pow(1.1, this.creature));
+            this.creatureCost = Math.ceil(this.baseCreatureCost * Math.pow(meta_1.metaParams.creatureCostInc, this.creature));
         };
         World.prototype.updateNum = function () {
             this.updateData();
@@ -355,20 +398,27 @@ define("world", ["require", "exports", "ui_action", "utils", "jobs", "genesis"],
         };
         World.prototype.checkJobUnlocks = function () {
             this.jobs.unlock("hunter"); // Initially unlocked
+            if (this.creature >= 10) {
+                this.jobs.unlock("lumberjack");
+            }
         };
         World.prototype.updateElement = function () {
-            if (this.food >= 10 || this.creature > 0) {
+            if (this.food >= meta_1.metaParams.creatureCost || this.creature > 0) {
                 ui_action_3.html.showCreature();
-            }
-            if (this.creature >= 5) {
-                ui_action_3.html.showWorldTab();
+                if (this.creature >= 5) {
+                    ui_action_3.html.showWorldTab();
+                    this.checkJobUnlocks();
+                }
+                if (this.wood > 0) {
+                    ui_action_3.html.showWood();
+                }
             }
         };
         return World;
     }(utils_3.BaseGameData));
     exports.World = World;
 });
-define("react", ["require", "exports", "genesis", "jobs", "ui_action", "utils"], function (require, exports, genesis_2, jobs_2, ui_action_4, utils_4) {
+define("react", ["require", "exports", "genesis", "jobs", "ui_action", "utils", "genesis"], function (require, exports, genesis_2, jobs_2, ui_action_4, utils_4, genesis_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.add_reaction = void 0;
@@ -401,7 +451,7 @@ define("react", ["require", "exports", "genesis", "jobs", "ui_action", "utils"],
                 (0, utils_4.buyWithKeys)(e, function () { return genesis_2.game.world.addCreature(); });
             });
             $("#add-food").click(function () {
-                genesis_2.game.world.addFood(1);
+                genesis_2.game.world.addFood(genesis_3.DEBUG ? 20 : 1);
             });
             $("#hard-reset").click(function () {
                 localStorage.removeItem("save");

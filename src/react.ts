@@ -1,7 +1,8 @@
 import { game } from 'genesis';
 import { allJobs } from 'jobs';
 import { html } from 'ui_action';
-import { buyWithKeys, getAmountWithKeys } from 'utils';
+import { buyWithKeys } from 'utils';
+import { DEBUG } from 'genesis';
 
 declare var $;
 
@@ -38,7 +39,7 @@ export function add_reaction() {
     });
 
     $("#add-food").click(() => {
-      game.world.addFood(1);
+      game.world.addFood(DEBUG ? 20 : 1);
     });
 
     $("#hard-reset").click(() => {

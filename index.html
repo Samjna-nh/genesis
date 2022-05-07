@@ -70,6 +70,16 @@
                 <button id="add-food" type="button" class="btn btn-light">+1</button>
               </div>
             </div>
+            <div id="wood" class="row align-items-center hide_">
+              <div class="col-1">
+                Wood:
+              </div>
+              <div id="wood-num" class="col-1">
+              </div>
+              <div class="col-1">
+                +<span id="wood-ps"></span>/s
+              </div>
+            </div>
             <div id="creature" class="hide_ row align-items-center">
               <div class="col-1">
                 <span id="creature-label">Human</span>:
@@ -114,14 +124,23 @@
                 +<span id="hunter-food"></span>&nbspfood/s.
               </div>
             </div>
-            <div id="lumberjack-pane" class="row hide_ align-items-center">
+            <div id="lumberjack-pane" class="row align-items-center hide_">
               <div id="lumberjack-label" class="col-1">
                 Lumberjack:
               </div>
               <div id="lumberjack-num" class="col-2"></div>
-              <div id="lumberjack-btn" class="col-1">
-                <button id="sub-lumberjack" type="button" class="btn btn-sm btn-light">-</button>
-                <button id="add-lumberjack" type="button" class="btn btn-sm btn-light">+</button>
+              <div id="lumberjack-btn" class="col-2">
+                <div class="btn-group">
+                  <button id="sub-lumberjack" type="button" class="btn btn-sm btn-light">
+                    -<span class="amount-type-2"></span>
+                  </button>
+                  <button id="add-lumberjack" type="button" class="btn btn-sm btn-light">
+                    +<span class="amount-type-2"></span>
+                  </button>
+                </div>
+              </div>
+              <div id="lumberjack-product" class="col-3 text-secondary hide_">
+                +<span id="lumberjack-wood"></span>&nbspwood/s.
               </div>
             </div>
             <div id="farmer-pane" class="row hide_ align-items-center">
